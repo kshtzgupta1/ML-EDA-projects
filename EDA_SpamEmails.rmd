@@ -1,12 +1,14 @@
 ---
 title: "EDA of Spam & Non-Spam Emails"
 author: "Authored by Kshitiz Gupta."
-output: 
+output:
+  pdf_document:
+    toc: yes
   html_document:
-    toc: true
+    toc: yes
     toc_float:
-      collapsed: true
-      smooth_scroll: true
+      collapsed: yes
+      smooth_scroll: yes
 ---
 
 ```{r setup, include=FALSE, warning = F, message=FALSE}
@@ -186,9 +188,6 @@ email %>% filter(spam == "spam") %>% group_by(to_multiple) %>% summarize(median(
 **The answer seems to be yes, the typical length of non-spam sent to multiple people is a bit lower than those sent to only one person.**<br />
 
 
-
-
-
 > Q2. For emails containing the word "dollar", does the typical spam email contain a greater number of occurrences of the word than the typical non-spam email? 
 
 ```{r}
@@ -232,20 +231,12 @@ email %>% ggplot()+ geom_bar(aes(x = number)) + facet_grid(~spam)
 
 > Q5. How is the time of the day at which the email was sent associated with spam i.e. is there a particular time of the day when more spam emails are sent?
 
-
-
-```{r}
-
-email %>% 
-   filter(time < ymd(20120102)) %>% 
-  ggplot(aes(time)) + 
-  geom_freqpoly(binwidth = 600) + facet_grid(~ spam) + theme(axis.text.x = element_text(angle = 90))
+```{r, include = F, echo = F}
+email = email %>% mutate(hour = update(time, yday = 1))
+email = email[-c(1,2),]
 ```
 
 ```{r}
-email = email %>% mutate(hour = update(time, yday = 1))
-email = email[-c(1,2),]
-
 email %>% 
   ggplot(aes(hour)) + 
   geom_freqpoly(binwidth = 600) + facet_grid(~ spam) + theme(axis.text.x = element_text(angle = 90))
