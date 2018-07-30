@@ -1,5 +1,5 @@
 ---
-title: "EDA of Spam Emails"
+title: "EDA of Spam & Non-Spam Emails"
 author: "Authored by Kshitiz Gupta."
 output: 
   html_document:
@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-This is an Exploratory Data Analysis of the `email` dataset from the `openintro` package. T
+This is an Exploratory Data Analysis of the `email` dataset from the `openintro` package. 
 
 ## Description
 These data represent incoming emails into David Diez's Gmail Account for the first three months of 2012. All personally identifiable information has been removed.
@@ -87,7 +87,7 @@ Factor variable saying whether there was no number, a small number (under 1 mill
 Loading the Necessary Packages
 
 ```{r, message = F, warning = F}
-library(openintro); library(tidyverse); library(magrittr); library(corrplot); library(lubridate)
+library(openintro); library(tidyverse); library(magrittr); library(corrplot); library(lubridate); library(nycflights13)
 ```
 
 # Spam and num of characters
@@ -232,15 +232,27 @@ email %>% ggplot()+ geom_bar(aes(x = number)) + facet_grid(~spam)
 
 > Q5. How is the time of the day at which the email was sent associated with spam i.e. is there a particular time of the day when more spam emails are sent?
 
+
+
 ```{r}
 
 email %>% 
-  mutate(hour = update(time, yday = 1)) %>% 
-  ggplot(aes(hour)) +
-    geom_freqpoly(binwidth = 300) + theme(axis.text.x = element_text(angle = 90)) + facet_grid(~ spam)
+   filter(time < ymd(20120102)) %>% 
+  ggplot(aes(time)) + 
+  geom_freqpoly(binwidth = 600) + facet_grid(~ spam) + theme(axis.text.x = element_text(angle = 90))
 ```
 
-**So there doesn't seem to be a particular time of the day when there is a spike in spam emails** <br />
+```{r}
+email = email %>% mutate(hour = update(time, yday = 1))
+email = email[-c(1,2),]
+
+email %>% 
+  ggplot(aes(hour)) + 
+  geom_freqpoly(binwidth = 600) + facet_grid(~ spam) + theme(axis.text.x = element_text(angle = 90))
+```
+
+
+**Unlike non-spam emails which peak at certain times during the day we notice that the voulme of spam emails remains relatively constant throughout the day** <br />
 
 
 
